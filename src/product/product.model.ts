@@ -11,7 +11,6 @@ import { Brand } from 'src/brand/brand.model';
 import { Category } from 'src/categories/category.model';
 import { User } from 'src/user/user.model';
 
-
 interface ProductCreationAttrs {
   name: string;
   price: number;
@@ -23,11 +22,15 @@ interface ProductCreationAttrs {
   categoryId: number;
 }
 
+interface StarCreationAttrs {
+  value: number;
+}
+
 interface ReviewCreationAttrs {
   message: string;
   userId: number;
-  rating: number;
   productId: number;
+  starId: number;
 }
 
 interface ProductFeaturesCreationAttrs {
@@ -83,14 +86,14 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   image: string;
 
   @ForeignKey(() => Brand)
-  @Column({type: DataType.INTEGER, allowNull: false})
+  @Column({ type: DataType.INTEGER, allowNull: false })
   brandId: number;
 
   @BelongsTo(() => Brand)
   brand: Brand;
 
   @ForeignKey(() => Category)
-  @Column({type: DataType.INTEGER, allowNull: false})
+  @Column({ type: DataType.INTEGER, allowNull: false })
   categoryId: number;
 
   @BelongsTo(() => Category)
@@ -104,7 +107,10 @@ export class Product extends Model<Product, ProductCreationAttrs> {
 }
 
 @Table({ tableName: 'product_features' })
-export class ProductFeatures extends Model<ProductFeatures, ProductFeaturesCreationAttrs> {
+export class ProductFeatures extends Model<
+  ProductFeatures,
+  ProductFeaturesCreationAttrs
+> {
   @Column({
     type: DataType.INTEGER,
     unique: true,
@@ -126,11 +132,31 @@ export class ProductFeatures extends Model<ProductFeatures, ProductFeaturesCreat
   description: string;
 
   @ForeignKey(() => Product)
-  @Column({type: DataType.INTEGER, allowNull: false})
+  @Column({ type: DataType.INTEGER, allowNull: false })
   productId: number;
 
   @BelongsTo(() => Product)
   product: Product;
+}
+
+@Table({ tableName: 'star' })
+export class Star extends Model<Star, StarCreationAttrs> {
+  @Column({
+    type: DataType.INTEGER,
+    unique: true,
+    autoIncrement: true,
+    primaryKey: true,
+  })
+  id: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  value: number;
+
+  @HasMany(() => Review)
+  reviews: Review[];
 }
 
 @Table({ tableName: 'review' })
@@ -150,22 +176,23 @@ export class Review extends Model<Review, ReviewCreationAttrs> {
   message: string;
 
   @ForeignKey(() => User)
-  @Column({type: DataType.INTEGER, allowNull: false})
+  @Column({ type: DataType.INTEGER, allowNull: false })
   userId: number;
 
   @BelongsTo(() => User)
   user: User;
 
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  rating: number;
-
   @ForeignKey(() => Product)
-  @Column({type: DataType.INTEGER, allowNull: false})
+  @Column({ type: DataType.INTEGER, allowNull: false })
   productId: number;
 
   @BelongsTo(() => Product)
   product: Product;
+
+  @ForeignKey(() => Star)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  starId: number;
+
+  @BelongsTo(() => Star)
+  star: Star;
 }

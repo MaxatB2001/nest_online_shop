@@ -11,7 +11,7 @@ export enum ImageType {
 
 @Injectable()
 export class FilesService {
-  createFile(type: ImageType, file): string {
+  createFile(type: ImageType, file: any): string {
     try {
       const fileExtendtion = file.originalname.split('.').pop();
       const fileName = uuid.v4() + '.' + fileExtendtion;

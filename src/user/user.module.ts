@@ -17,8 +17,6 @@ import { UserService } from './user.service';
     RolesModule,
     forwardRef(() => AuthModule),
   ],
-  exports: [
-    UserService,
-  ]
+  exports: [UserService],
 })
 export class UserModule {}

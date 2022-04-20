@@ -6,10 +6,10 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
-  
+
   @Get()
   getUsers() {
-    return this.userService.getAllUsers()
+    return this.userService.getAllUsers();
   }
 
   @Post()

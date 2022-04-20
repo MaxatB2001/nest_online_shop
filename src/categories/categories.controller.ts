@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -15,11 +23,16 @@ export class CategoriesController {
 
   @Get()
   getParentCategories() {
-    return this.categoriesService.get()
+    return this.categoriesService.get();
+  }
+
+  @Get('/all')
+  getAllcategories() {
+    return this.categoriesService.getAll();
   }
 
   @Get('/:slug')
   getSubCategories(@Param('slug') slug: string) {
-    return this.categoriesService.getSub(slug)
+    return this.categoriesService.getSub(slug);
   }
 }

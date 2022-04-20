@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Req,
   Request,
   UploadedFile,
   UseGuards,
@@ -11,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { CreateProductFeatureDto } from './dto/create-product-feature.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { CreateStarDto } from './dto/create-star.dto';
 import { ProductService } from './product.service';
 
 @Controller('product')
@@ -32,8 +33,27 @@ export class ProductController {
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
-  create(@Body() createProductDto: CreateProductDto, @UploadedFile() image) {
-    return this.productService.createProduct(createProductDto, image);
+  create(
+    @Req() req: any,
+    @Body() createProductDto: CreateProductDto,
+    @UploadedFile() image,
+  ) {
+    return this.productService.createProduct(createProductDto, image, req);
+  }
+
+  @Get('/review/star')
+  getReviewStars() {
+    return this.productService.getStars();
+  }
+
+  @Post('/review/star')
+  createReviewStar(@Body() createStarDto: CreateStarDto) {
+    return this.productService.createStar(createStarDto);
+  }
+
+  @Get('/reviews/:id')
+  getAllReview(@Param('id') id: number) {
+    return this.productService.getProductReviews(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -44,12 +64,5 @@ export class ProductController {
     @Param('slug') slug: string,
   ) {
     return this.productService.createReview(createReviewDto, req.user.id, slug);
-  }
-
-  @Post('/feature')
-  createProductFeature(
-    @Body() createProductFeatureDto: CreateProductFeatureDto,
-  ) {
-    return this.productService.createFeature(createProductFeatureDto);
   }
 }

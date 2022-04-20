@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { FilesService, ImageType } from 'src/files/files.service';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { Product, ProductFeatures, Review } from './product.model';
+import { Product, ProductFeatures, Review, Star } from './product.model';
 
 @Injectable()
 export class ProductService {
@@ -11,19 +10,34 @@ export class ProductService {
     @InjectModel(Review) private reviewRepository: typeof Review,
     @InjectModel(ProductFeatures)
     private productFeatureRepository: typeof ProductFeatures,
+    @InjectModel(Star) private reviewStarRepository: typeof Star,
     private fileService: FilesService,
   ) {}
 
-  async createProduct(dto, image) {
+  async createProduct(dto, image, req) {
     const productImage = this.fileService.createFile(ImageType.PRODUCT, image);
     const product = await this.productRepository.create({
       ...dto,
       image: productImage,
     });
+
+    let { feature } = req.body;
+
+    if (feature) {
+      feature = JSON.parse(feature);
+      feature.forEach((f) =>
+        this.productFeatureRepository.create({
+          title: f.title,
+          description: f.description,
+          productId: product.id,
+        }),
+      );
+    }
+
     return product;
   }
 
-  async getProductBySlug(slug) {
+  async getProductBySlug(slug: string) {
     const product = await this.productRepository.findOne({
       where: { slug },
       include: { all: true },
@@ -51,16 +65,31 @@ export class ProductService {
     return review;
   }
 
-  async createFeature(dto) {
-    const productFeature = await this.productFeatureRepository.create(dto);
-    return productFeature;
-  }
-
   async getLatestProducts() {
     const latest = await this.productRepository.findAll({
       limit: 5,
       order: [['createdAt', 'DESC']],
     });
     return latest;
+  }
+
+  async getProductReviews(id) {
+    const reviews = await this.reviewRepository.findAll({
+      where: { productId: id },
+      include: { all: true },
+    });
+    return reviews;
+  }
+
+  async getStars() {
+    const stars = await this.reviewStarRepository.findAll({
+      include: { all: true },
+    });
+    return stars;
+  }
+
+  async createStar(dto) {
+    const star = await this.reviewStarRepository.create(dto);
+    return star;
   }
 }

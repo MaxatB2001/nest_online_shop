@@ -6,7 +6,7 @@ import { Category } from 'src/categories/category.model';
 import { FilesModule } from 'src/files/files.module';
 import { User } from 'src/user/user.model';
 import { ProductController } from './product.controller';
-import { Product, ProductFeatures, Review } from './product.model';
+import { Product, ProductFeatures, Review, Star } from './product.model';
 import { ProductService } from './product.service';
 
 @Module({
@@ -15,10 +15,16 @@ import { ProductService } from './product.service';
   imports: [
     FilesModule,
     AuthModule,
-    SequelizeModule.forFeature([Product, Category, Brand, User, Review, ProductFeatures])
+    SequelizeModule.forFeature([
+      Product,
+      Category,
+      Brand,
+      User,
+      Review,
+      ProductFeatures,
+      Star,
+    ]),
   ],
-  exports: [
-    ProductService
-  ]
+  exports: [ProductService],
 })
 export class ProductModule {}

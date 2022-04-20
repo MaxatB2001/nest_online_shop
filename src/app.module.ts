@@ -13,7 +13,12 @@ import { ProductModule } from './product/product.module';
 import { FilesModule } from './files/files.module';
 import { CategoriesModule } from './categories/categories.module';
 import { Category } from './categories/category.model';
-import { Product, ProductFeatures, Review } from './product/product.model';
+import {
+  Product,
+  ProductFeatures,
+  Review,
+  Star,
+} from './product/product.model';
 import { BrandModule } from './brand/brand.module';
 import { CategoryBrand } from './brand/brand_categories.model';
 import { Brand } from './brand/brand.model';
@@ -23,10 +28,10 @@ import { Brand } from './brand/brand.model';
   providers: [],
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.${process.env.NODE_ENV}.env`
+      envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
     ServeStaticModule.forRoot({
-      rootPath: path.resolve(__dirname, 'static')
+      rootPath: path.resolve(__dirname, 'static'),
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
@@ -35,7 +40,18 @@ import { Brand } from './brand/brand.model';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, UserRoles, Category, Product, CategoryBrand, Brand, Review, ProductFeatures],
+      models: [
+        User,
+        Role,
+        UserRoles,
+        Category,
+        Product,
+        CategoryBrand,
+        Brand,
+        Review,
+        ProductFeatures,
+        Star,
+      ],
       autoLoadModels: true,
     }),
     UserModule,

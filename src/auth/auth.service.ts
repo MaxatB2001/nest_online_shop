@@ -1,9 +1,15 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/user/user.model';
+import { CheckUserDto } from 'src/user/dto/check-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -37,15 +43,22 @@ export class AuthService {
     const user = await this.userService.getUserByEmail(dto.email);
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
     if (user && passwordMatch) {
-      return user
+      return user;
     }
-    throw new UnauthorizedException({message: 'Данные не прошли валидацию'})
+    throw new UnauthorizedException({ message: 'Данные не прошли валидацию' });
   }
 
   private async generateJwtToken(user: User) {
     const payload = { email: user.email, id: user.id, roles: user.roles };
     return {
-      token: this.jwtService.sign(payload)
-    }
+      token: this.jwtService.sign(payload),
+    };
+  }
+
+  async checkUser(user: CheckUserDto) {
+    const payload = { email: user.email, id: user.id, roles: user.roles };
+    return {
+      token: this.jwtService.sign(payload),
+    };
   }
 }

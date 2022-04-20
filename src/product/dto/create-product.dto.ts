@@ -6,5 +6,4 @@ export class CreateProductDto {
   readonly avaliable: boolean;
   readonly brandId: number;
   readonly categoryId: number;
-
 }

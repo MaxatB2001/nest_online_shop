@@ -1,4 +1,13 @@
-import { Table, Model, Column, DataType, ForeignKey, BelongsTo, HasMany, BelongsToMany } from 'sequelize-typescript';
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  ForeignKey,
+  BelongsTo,
+  HasMany,
+  BelongsToMany,
+} from 'sequelize-typescript';
 import { Brand } from 'src/brand/brand.model';
 import { CategoryBrand } from 'src/brand/brand_categories.model';
 import { Product } from 'src/product/product.model';
@@ -22,14 +31,14 @@ export class Category extends Model<Category, CategoryCreationAttrs> {
   id: number;
 
   @Column({
-      type: DataType.STRING,
-      allowNull: false,
+    type: DataType.STRING,
+    allowNull: false,
   })
   title: string;
 
   @Column({
-      type: DataType.STRING,
-      allowNull: false,
+    type: DataType.STRING,
+    allowNull: false,
   })
   image: string;
 
@@ -46,7 +55,7 @@ export class Category extends Model<Category, CategoryCreationAttrs> {
   slug: string;
 
   @ForeignKey(() => Category)
-  @Column({type: DataType.INTEGER, allowNull: true})
+  @Column({ type: DataType.INTEGER, allowNull: true })
   categoryId: number;
 
   @BelongsTo(() => Category)

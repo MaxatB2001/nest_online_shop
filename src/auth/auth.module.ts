@@ -13,12 +13,9 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.PRIVATE_KEY || '$$okqwj$$ww$@@wpwdk',
       signOptions: {
         expiresIn: '24h',
-      }
-    })   
+      },
+    }),
   ],
-  exports: [
-    AuthService,
-    JwtModule,
-  ]
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
