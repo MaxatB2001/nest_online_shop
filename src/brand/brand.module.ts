@@ -11,10 +11,10 @@ import { CategoryBrand } from './brand_categories.model';
 @Module({
   controllers: [BrandController],
   providers: [BrandService],
-  imports:[
+  imports: [
     FilesModule,
-    SequelizeModule.forFeature([Category, Brand, CategoryBrand, Product])
+    SequelizeModule.forFeature([Category, Brand, CategoryBrand, Product]),
   ],
-  exports: [BrandModule]
+  exports: [BrandModule],
 })
 export class BrandModule {}

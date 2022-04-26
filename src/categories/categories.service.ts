@@ -38,7 +38,7 @@ export class CategoriesService {
     return categories;
   }
 
-  async getSub(slug) {
+  async getSub(slug: string, req: any) {
     const categorie = await this.categoriesRepository.findOne({
       where: { slug },
       include: { all: true },
@@ -53,6 +53,7 @@ export class CategoriesService {
     }
     const products = await this.productService.getProductsByCategory(
       categorie.id,
+      req,
     );
     const res = {
       category: categorie,

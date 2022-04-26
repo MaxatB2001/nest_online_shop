@@ -45,11 +45,37 @@ export class ProductService {
     return product;
   }
 
-  async getProductsByCategory(categorieId: number) {
-    const products = await this.productRepository.findAll({
-      where: { categoryId: categorieId },
-      include: { all: true },
-    });
+  async getProductsByCategory(categorieId: number, req: any) {
+    console.log(req.query);
+    const { brandId } = req.query;
+    let { page, limit } = req.query;
+    page = page || 1;
+    limit = limit || 9;
+    const offset = page * limit - limit;
+    let products;
+    if (!brandId) {
+      const count = await this.productRepository.count({
+        where: { categoryId: categorieId },
+      });
+      const rows = await this.productRepository.findAll({
+        where: { categoryId: categorieId },
+        limit,
+        offset,
+        include: { all: true },
+      });
+      products = {
+        count,
+        rows,
+      };
+    }
+    if (brandId) {
+      products = await Product.findAndCountAll({
+        where: { categoryId: categorieId, brandId },
+        limit,
+        offset,
+        include: { all: true },
+      });
+    }
     return products;
   }
 
