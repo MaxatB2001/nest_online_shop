@@ -6,6 +6,7 @@ import {
   BelongsToMany,
   HasMany,
 } from 'sequelize-typescript';
+import { Order } from 'src/order/order.model';
 import { Review } from 'src/product/product.model';
 import { Role } from 'src/roles/roles.model';
 import { UserRoles } from 'src/roles/user-roles.model';
@@ -43,4 +44,7 @@ export class User extends Model<User, UserCreationAttrs> {
 
   @HasMany(() => Review)
   reviews: Review[];
+
+  @HasMany(() => Order)
+  orders: Order[];
 }

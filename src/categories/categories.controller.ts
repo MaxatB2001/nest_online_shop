@@ -22,14 +22,24 @@ export class CategoriesController {
     return this.categoriesService.createCategory(createCategoryDto, image);
   }
 
+  @Get('/all')
+  getAllCategories() {
+    return this.categoriesService.getAll();
+  }
+
   @Get()
   getParentCategories() {
     return this.categoriesService.get();
   }
 
-  @Get('/all')
-  getAllcategories() {
-    return this.categoriesService.getAll();
+  @Get('/latest')
+  getLatestCategories() {
+    return this.categoriesService.getLatest();
+  }
+
+  @Get('/popular')
+  getPopularCategories() {
+    return this.categoriesService.getPopular();
   }
 
   @Get('/:slug')

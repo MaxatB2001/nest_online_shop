@@ -22,6 +22,8 @@ import {
 import { BrandModule } from './brand/brand.module';
 import { CategoryBrand } from './brand/brand_categories.model';
 import { Brand } from './brand/brand.model';
+import { OrderModule } from './order/order.module';
+import { Order, OrderItem } from './order/order.model';
 
 @Module({
   controllers: [],
@@ -51,6 +53,8 @@ import { Brand } from './brand/brand.model';
         Review,
         ProductFeatures,
         Star,
+        Order,
+        OrderItem,
       ],
       autoLoadModels: true,
     }),
@@ -61,6 +65,7 @@ import { Brand } from './brand/brand.model';
     FilesModule,
     CategoriesModule,
     BrandModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

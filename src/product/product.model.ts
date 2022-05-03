@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { Brand } from 'src/brand/brand.model';
 import { Category } from 'src/categories/category.model';
+import { OrderItem } from 'src/order/order.model';
 import { User } from 'src/user/user.model';
 
 interface ProductCreationAttrs {
@@ -104,6 +105,9 @@ export class Product extends Model<Product, ProductCreationAttrs> {
 
   @HasMany(() => ProductFeatures)
   product_features: ProductFeatures[];
+
+  @HasMany(() => OrderItem)
+  order_items: OrderItem[];
 }
 
 @Table({ tableName: 'product_features' })
