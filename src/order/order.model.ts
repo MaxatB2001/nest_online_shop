@@ -13,7 +13,7 @@ import { User } from 'src/user/user.model';
 interface OrderCreationAttr {
   address: string;
   comment: string;
-  firsName: string;
+  firstName: string;
   lastName: string;
   phone: string;
   email: string;
@@ -53,7 +53,7 @@ export class Order extends Model<Order, OrderCreationAttr> {
     type: DataType.STRING,
     allowNull: false,
   })
-  firsName: string;
+  firstName: string;
 
   @Column({
     type: DataType.STRING,
@@ -78,6 +78,13 @@ export class Order extends Model<Order, OrderCreationAttr> {
     allowNull: false,
   })
   paidAmount: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: 'принят',
+  })
+  status: string;
 
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER, allowNull: false })

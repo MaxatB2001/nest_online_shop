@@ -1,7 +1,7 @@
 export class CreateOrderDto {
   address: string;
   comment: string;
-  firsName: string;
+  firstName: string;
   lastName: string;
   phone: string;
   email: string;

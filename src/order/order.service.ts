@@ -19,12 +19,20 @@ export class OrderService {
 
     items.forEach((i) =>
       this.orderItemRepository.create({
-        productId: i.productId,
+        productId: i.product.id,
         orderId: order.id,
         quantity: i.quantity,
       }),
     );
 
     return order;
+  }
+
+  async findUserOrders(id: number) {
+    const orders = await this.orderRepository.findAll({
+      where: { userId: id },
+      include: { all: true },
+    });
+    return orders;
   }
 }
