@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UseFilters,
+} from '@nestjs/common';
+import { HttpExceptionFilter } from 'src/shared/exeption';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
 
@@ -12,7 +23,12 @@ export class OrderController {
   }
 
   @Post()
-  createOrder(@Body() createOrderDto: CreateOrderDto, @Req() req: any) {
-    return this.orderService.order(createOrderDto, req);
+  @UseFilters(new HttpExceptionFilter())
+  async createOrder(@Body() createOrderDto: CreateOrderDto, @Req() req: any) {
+    const order = await this.orderService.order(createOrderDto, req);
+    if (order === null) {
+      throw new HttpException('s', HttpStatus.BAD_REQUEST);
+    }
+    return order;
   }
 }

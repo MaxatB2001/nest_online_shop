@@ -36,14 +36,25 @@ export class CategoriesService {
   async get() {
     const categories = await this.categoriesRepository.findAll({
       where: { categoryId: null },
-      include: { all: true },
+      include: [
+        {
+          model: Category,
+          as: 'subCategories',
+          include: [
+            {
+              model: Category,
+              as: 'subCategories',
+            },
+          ],
+        },
+      ],
     });
     return categories;
   }
 
   async getLatest() {
     const categories = await this.categoriesRepository.findAll({
-      limit: 8,
+      limit: 10,
       order: [['createdAt', 'DESC']],
     });
     return categories;

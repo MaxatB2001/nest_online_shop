@@ -24,6 +24,7 @@ export class BrandService {
       ...dto,
       image: brandImage,
     });
+    brand.$set('categories', dto.categoryId);
     return brand;
   }
 }
