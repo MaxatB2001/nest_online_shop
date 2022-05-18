@@ -22,6 +22,11 @@ export class OrderController {
     return this.orderService.findUserOrders(id);
   }
 
+  @Get()
+  getMonthOrders() {
+    return this.orderService.monthlyEncome();
+  }
+
   @Post()
   @UseFilters(new HttpExceptionFilter())
   async createOrder(@Body() createOrderDto: CreateOrderDto, @Req() req: any) {

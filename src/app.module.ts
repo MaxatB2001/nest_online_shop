@@ -12,10 +12,11 @@ import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
 import { FilesModule } from './files/files.module';
 import { CategoriesModule } from './categories/categories.module';
-import { Category } from './categories/category.model';
+import { Category, CategoryOrderCount } from './categories/category.model';
 import {
   Product,
   ProductFeatures,
+  ProductOrderCount,
   Review,
   Star,
 } from './product/product.model';
@@ -55,6 +56,8 @@ import { Order, OrderItem } from './order/order.model';
         Star,
         Order,
         OrderItem,
+        CategoryOrderCount,
+        ProductOrderCount,
       ],
       autoLoadModels: true,
     }),

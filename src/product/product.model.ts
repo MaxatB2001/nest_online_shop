@@ -40,6 +40,11 @@ interface ProductFeaturesCreationAttrs {
   productId: number;
 }
 
+interface ProductOrderCountCreationAttrs {
+  quantity: number;
+  productId: number;
+}
+
 @Table({ tableName: 'product' })
 export class Product extends Model<Product, ProductCreationAttrs> {
   @Column({
@@ -102,6 +107,9 @@ export class Product extends Model<Product, ProductCreationAttrs> {
 
   @HasMany(() => Review)
   reviews: Review[];
+
+  @HasMany(() => ProductOrderCount)
+  orderCount: ProductOrderCount[];
 
   @HasMany(() => ProductFeatures)
   product_features: ProductFeatures[];
@@ -199,4 +207,31 @@ export class Review extends Model<Review, ReviewCreationAttrs> {
 
   @BelongsTo(() => Star)
   star: Star;
+}
+
+@Table({ tableName: 'product_order_count' })
+export class ProductOrderCount extends Model<
+  ProductOrderCount,
+  ProductOrderCountCreationAttrs
+> {
+  @Column({
+    type: DataType.INTEGER,
+    unique: true,
+    autoIncrement: true,
+    primaryKey: true,
+  })
+  id: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  quantity: number;
+
+  @ForeignKey(() => Product)
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  productId: number;
+
+  @BelongsTo(() => Product)
+  product: Product;
 }

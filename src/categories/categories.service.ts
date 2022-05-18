@@ -4,7 +4,7 @@ import { FilesService, ImageType } from 'src/files/files.service';
 import { Product } from 'src/product/product.model';
 import sequelize from 'sequelize';
 import { ProductService } from 'src/product/product.service';
-import { Category } from './category.model';
+import { Category, CategoryOrderCount } from './category.model';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Sequelize } from 'sequelize-typescript';
 
@@ -62,21 +62,26 @@ export class CategoriesService {
 
   async getPopular() {
     const categories = await this.categoriesRepository.findAll({
-      attributes: {
-        include: [
-          [Sequelize.fn('COUNT', Sequelize.col('products.id')), 'productCount'],
-        ],
-      },
       include: [
         {
-          model: Product,
-          attributes: [],
+          model: CategoryOrderCount,
+          as: 'ordersCount',
         },
       ],
-      group: ['Category.id'],
-      order: [[sequelize.literal('"productCount"'), 'DESC']],
     });
-    return categories;
+
+    const counted = categories.map((c) => {
+      const sum = c.ordersCount.reduce(
+        (partialSum, a) => partialSum + a.productQuantity,
+        0,
+      );
+      return { category: c, sum };
+    });
+
+    const sorted = counted.sort((a, b) => {
+      return b.sum - a.sum;
+    });
+    return sorted.slice(0, 10);
   }
 
   async getSub(slug: string, req: any) {

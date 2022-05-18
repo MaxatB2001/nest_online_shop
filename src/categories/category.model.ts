@@ -20,6 +20,11 @@ interface CategoryCreationAttrs {
   icon: string;
 }
 
+interface CategoryOrderCountCreationAttrs {
+  categoryId: number;
+  productQuantity: number;
+}
+
 @Table({ tableName: 'category' })
 export class Category extends Model<Category, CategoryCreationAttrs> {
   @Column({
@@ -69,4 +74,34 @@ export class Category extends Model<Category, CategoryCreationAttrs> {
 
   @HasMany(() => Product)
   products: Product[];
+
+  @HasMany(() => CategoryOrderCount)
+  ordersCount: CategoryOrderCount[];
+}
+
+@Table({ tableName: 'category_order_count' })
+export class CategoryOrderCount extends Model<
+  CategoryOrderCount,
+  CategoryOrderCountCreationAttrs
+> {
+  @Column({
+    type: DataType.INTEGER,
+    unique: true,
+    autoIncrement: true,
+    primaryKey: true,
+  })
+  id: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  productQuantity: number;
+
+  @ForeignKey(() => Category)
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  categoryId: number;
+
+  @BelongsTo(() => Category)
+  category: Category;
 }
