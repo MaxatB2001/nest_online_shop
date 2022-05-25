@@ -21,6 +21,15 @@ import { ProductService } from './product.service';
 export class ProductController {
   constructor(private productService: ProductService) {}
 
+  @Get('/alike')
+  getAlike(@Req() req: any) {
+    return this.productService.getAlikeProducts(req);
+  }
+  @Get('/monthSales')
+  getMonthSalesCount() {
+    return this.productService.getMonthCount();
+  }
+
   @Get('/latest')
   getLatest() {
     return this.productService.getLatestProducts();

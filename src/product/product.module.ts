@@ -6,7 +6,13 @@ import { Category } from 'src/categories/category.model';
 import { FilesModule } from 'src/files/files.module';
 import { User } from 'src/user/user.model';
 import { ProductController } from './product.controller';
-import { Product, ProductFeatures, Review, Star } from './product.model';
+import {
+  Product,
+  ProductFeatures,
+  ProductOrderCount,
+  Review,
+  Star,
+} from './product.model';
 import { ProductService } from './product.service';
 
 @Module({
@@ -23,6 +29,7 @@ import { ProductService } from './product.service';
       Review,
       ProductFeatures,
       Star,
+      ProductOrderCount,
     ]),
   ],
   exports: [ProductService],

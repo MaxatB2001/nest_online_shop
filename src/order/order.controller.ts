@@ -17,6 +17,11 @@ import { OrderService } from './order.service';
 export class OrderController {
   constructor(private orderService: OrderService) {}
 
+  @Get('/total')
+  sumOrders() {
+    return this.orderService.sumAllOrders();
+  }
+
   @Get('/:id')
   getOrders(@Param('id') id: number) {
     return this.orderService.findUserOrders(id);

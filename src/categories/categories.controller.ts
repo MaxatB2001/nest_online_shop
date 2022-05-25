@@ -44,7 +44,6 @@ export class CategoriesController {
 
   @Get('/:slug')
   getSubCategories(@Param('slug') slug: string, @Req() req: any) {
-    console.log(req.query);
     return this.categoriesService.getSub(slug, req);
   }
 }

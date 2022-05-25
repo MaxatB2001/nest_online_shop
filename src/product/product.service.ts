@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import { FilesService, ImageType } from 'src/files/files.service';
-import { Product, ProductFeatures, Review, Star } from './product.model';
+import {
+  Product,
+  ProductFeatures,
+  ProductOrderCount,
+  Review,
+  Star,
+} from './product.model';
 
 @Injectable()
 export class ProductService {
@@ -12,6 +19,8 @@ export class ProductService {
     private productFeatureRepository: typeof ProductFeatures,
     @InjectModel(Star) private reviewStarRepository: typeof Star,
     private fileService: FilesService,
+    @InjectModel(ProductOrderCount)
+    private productOrderCountRepository: typeof ProductOrderCount,
   ) {}
 
   async createProduct(dto, image, req) {
@@ -40,13 +49,21 @@ export class ProductService {
   async getProductBySlug(slug: string) {
     const product = await this.productRepository.findOne({
       where: { slug },
-      include: { all: true },
+      include: [
+        {
+          model: ProductFeatures,
+          as: 'product_features',
+        },
+        {
+          model: Review,
+          as: 'reviews',
+        },
+      ],
     });
     return product;
   }
 
   async getProductsByCategory(categorieId: number, req: any) {
-    console.log(req.query);
     const { brandId } = req.query;
     let { page, limit } = req.query;
     page = page || 1;
@@ -61,7 +78,16 @@ export class ProductService {
         where: { categoryId: categorieId },
         limit,
         offset,
-        include: { all: true },
+        include: [
+          {
+            model: Review,
+            as: 'reviews',
+          },
+          {
+            model: ProductFeatures,
+            as: 'product_features',
+          },
+        ],
       });
       products = {
         count,
@@ -117,5 +143,31 @@ export class ProductService {
   async createStar(dto) {
     const star = await this.reviewStarRepository.create(dto);
     return star;
+  }
+
+  async getAlikeProducts(req: any) {
+    const { categoryId } = req.query;
+    const { brandId } = req.query;
+    let { price } = req.query;
+    price = Number(price);
+    const products = await this.productRepository.findAll({
+      where: {
+        categoryId,
+        brandId,
+        price: { [Op.between]: [price - 10000, price + 10000] },
+      },
+      include: { all: true },
+    });
+    return products;
+  }
+
+  async getMonthCount() {
+    const date = new Date();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const orders = await this.productOrderCountRepository.findAll({
+      where: { createdAt: { [Op.between]: [firstDay, new Date()] } },
+    });
+    const count = orders.reduce((acc, val) => acc + val.quantity, 0);
+    return count;
   }
 }

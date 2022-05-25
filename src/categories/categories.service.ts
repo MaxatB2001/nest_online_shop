@@ -87,10 +87,15 @@ export class CategoriesService {
   async getSub(slug: string, req: any) {
     const categorie = await this.categoriesRepository.findOne({
       where: { slug },
-      include: { all: true },
+      include: [
+        {
+          model: Category,
+          as: 'subCategories',
+        },
+      ],
     });
     const subCategories = categorie.subCategories;
-    if (subCategories.length) {
+    if (subCategories.length > 0) {
       const res = {
         category: categorie,
         subs: subCategories,

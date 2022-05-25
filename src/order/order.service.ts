@@ -124,6 +124,9 @@ export class OrderService {
       return a.date - b.date;
     });
 
-    return sorted;
+    return {
+      sorted,
+      count: orders.length,
+    };
   }
 }
