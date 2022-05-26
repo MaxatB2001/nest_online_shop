@@ -65,13 +65,8 @@ export class ProductController {
     return this.productService.getProductReviews(id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('/review/:slug')
-  createReview(
-    @Body() createReviewDto: CreateReviewDto,
-    @Request() req,
-    @Param('slug') slug: string,
-  ) {
-    return this.productService.createReview(createReviewDto, req.user.id, slug);
+  @Post('/review')
+  createReview(@Body() createReviewDto: CreateReviewDto) {
+    return this.productService.createReview(createReviewDto);
   }
 }

@@ -105,15 +105,8 @@ export class ProductService {
     return products;
   }
 
-  async createReview(dto, userId, productSlug) {
-    const product = await this.productRepository.findOne({
-      where: { slug: productSlug },
-    });
-    const review = await this.reviewRepository.create({
-      ...dto,
-      userId: userId,
-      productId: product.id,
-    });
+  async createReview(dto) {
+    const review = await this.reviewRepository.create(dto);
     return review;
   }
 
