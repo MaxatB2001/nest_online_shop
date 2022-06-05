@@ -35,6 +35,11 @@ export class ProductController {
     return this.productService.getLatestProducts();
   }
 
+  @Get('/search/:query')
+  getSearch(@Param('query') query: string) {
+    return this.productService.findBySearch(query);
+  }
+
   @Get('/:slug')
   getOne(@Param('slug') slug: string) {
     return this.productService.getProductBySlug(slug);

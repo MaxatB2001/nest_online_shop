@@ -19,12 +19,37 @@ interface OrderCreationAttr {
   email: string;
   paidAmount: number;
   userId: number;
+  statusId: number;
 }
 
 interface OrderItemCreationAttrs {
   productId: number;
   orderId: number;
   quantity: number;
+}
+
+interface OrderStatusCreationAttrs {
+  value: string;
+}
+
+@Table({ tableName: 'order_status' })
+export class OrderStatus extends Model<OrderStatus, OrderStatusCreationAttrs> {
+  @Column({
+    type: DataType.INTEGER,
+    unique: true,
+    autoIncrement: true,
+    primaryKey: true,
+  })
+  id: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  value: string;
+
+  @HasMany(() => Order)
+  orders: Order[];
 }
 
 @Table({ tableName: 'order' })
@@ -79,12 +104,12 @@ export class Order extends Model<Order, OrderCreationAttr> {
   })
   paidAmount: number;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    defaultValue: 'принят',
-  })
-  status: string;
+  @ForeignKey(() => OrderStatus)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  statusId: number;
+
+  @BelongsTo(() => OrderStatus)
+  status: OrderStatus;
 
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER, allowNull: false })

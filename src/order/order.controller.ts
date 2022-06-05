@@ -12,6 +12,7 @@ import {
 import { HttpExceptionFilter } from 'src/shared/exeption';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
+import { CreateOrderStatusDto } from './dto/create-order-status.dto';
 
 @Controller('order')
 export class OrderController {
@@ -20,6 +21,21 @@ export class OrderController {
   @Get('/total')
   sumOrders() {
     return this.orderService.sumAllOrders();
+  }
+
+  @Get('/manager-orders')
+  managerOrders() {
+    return this.orderService.getManagerOrders();
+  }
+
+  @Get('/order-status')
+  getOrderStatus() {
+    return this.orderService.getOrderStatus();
+  }
+
+  @Get('/single/:id')
+  getSingleOrder(@Param('id') id: number) {
+    return this.orderService.getOrderById(id);
   }
 
   @Get('/:id')
@@ -40,5 +56,10 @@ export class OrderController {
       throw new HttpException('s', HttpStatus.BAD_REQUEST);
     }
     return order;
+  }
+
+  @Post('/order-status')
+  async createOrderStatus(@Body() createOrderStatusDto: CreateOrderStatusDto) {
+    return this.orderService.createOrderStatus(createOrderStatusDto);
   }
 }

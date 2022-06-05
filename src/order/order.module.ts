@@ -4,7 +4,7 @@ import { CategoryOrderCount } from 'src/categories/category.model';
 import { Product, ProductOrderCount } from 'src/product/product.model';
 import { User } from 'src/user/user.model';
 import { OrderController } from './order.controller';
-import { Order, OrderItem } from './order.model';
+import { Order, OrderItem, OrderStatus } from './order.model';
 import { OrderService } from './order.service';
 
 @Module({
@@ -18,6 +18,7 @@ import { OrderService } from './order.service';
       OrderItem,
       CategoryOrderCount,
       ProductOrderCount,
+      OrderStatus,
     ]),
   ],
 })

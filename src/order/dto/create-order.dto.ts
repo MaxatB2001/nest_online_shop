@@ -7,4 +7,5 @@ export class CreateOrderDto {
   email: string;
   paidAmount: number;
   userId: number;
+  statusId: number;
 }

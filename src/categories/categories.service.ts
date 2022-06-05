@@ -7,6 +7,7 @@ import { ProductService } from 'src/product/product.service';
 import { Category, CategoryOrderCount } from './category.model';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Sequelize } from 'sequelize-typescript';
+import {Brand} from "../brand/brand.model";
 
 @Injectable()
 export class CategoriesService {
@@ -91,6 +92,10 @@ export class CategoriesService {
         {
           model: Category,
           as: 'subCategories',
+        },
+        {
+          model: Brand,
+          as: 'brands',
         },
       ],
     });

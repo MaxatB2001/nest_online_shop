@@ -1,4 +1,10 @@
-import { Table, Model, Column, DataType, BelongsToMany } from 'sequelize-typescript';
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  BelongsToMany,
+} from 'sequelize-typescript';
 import { User } from 'src/user/user.model';
 import { UserRoles } from './user-roles.model';
 
@@ -18,18 +24,18 @@ export class Role extends Model<Role, RoleCreationAttrs> {
   id: number;
 
   @Column({
-      type: DataType.STRING,
-      unique: true,
-      allowNull: false,
+    type: DataType.STRING,
+    unique: true,
+    allowNull: false,
   })
   value: string;
 
   @Column({
-      type: DataType.STRING,
-      allowNull: false,
+    type: DataType.STRING,
+    allowNull: false,
   })
   description: string;
-  
+
   @BelongsToMany(() => User, () => UserRoles)
   users: User[];
 }

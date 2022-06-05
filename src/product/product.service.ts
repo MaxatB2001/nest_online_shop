@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
+import sequelize, { Op } from 'sequelize';
 import { FilesService, ImageType } from 'src/files/files.service';
 import {
   Product,
@@ -64,16 +64,29 @@ export class ProductService {
   }
 
   async getProductsByCategory(categorieId: number, req: any) {
-    const { brandId } = req.query;
+    let { brandId } = req.query;
     let { page, limit } = req.query;
+    let { max, min } = req.query;
+    min = Number(min);
+    max = Number(max);
+    brandId = JSON.parse(brandId);
     page = page || 1;
     limit = limit || 9;
     const offset = page * limit - limit;
     let products;
-    if (!brandId) {
+    if ((!brandId || brandId.length === 0) && max == 0 && min == 0) {
       const count = await this.productRepository.count({
         where: { categoryId: categorieId },
       });
+
+      const maxPrice = await this.productRepository.findOne({
+        attributes: [[sequelize.fn('MAX', sequelize.col('price')), 'max']],
+      });
+
+      const minPrice = await this.productRepository.findOne({
+        attributes: [[sequelize.fn('MIN', sequelize.col('price')), 'min']],
+      });
+
       const rows = await this.productRepository.findAll({
         where: { categoryId: categorieId },
         limit,
@@ -92,14 +105,51 @@ export class ProductService {
       products = {
         count,
         rows,
+        maxPrice,
+        minPrice,
       };
     }
-    if (brandId) {
+
+    if ((!brandId || brandId.length === 0) && (min || max)) {
       products = await Product.findAndCountAll({
-        where: { categoryId: categorieId, brandId },
+        where: {
+          categoryId: categorieId,
+          price: { [Op.between]: [min, max] },
+        },
         limit,
         offset,
-        include: { all: true },
+        include: [
+          {
+            model: Review,
+            as: 'reviews',
+          },
+          {
+            model: ProductFeatures,
+            as: 'product_features',
+          },
+        ],
+      });
+    }
+
+    if (brandId.length > 0 && (min || max)) {
+      products = await Product.findAndCountAll({
+        where: {
+          brandId: brandId,
+          categoryId: categorieId,
+          price: { [Op.between]: [min, max] },
+        },
+        limit,
+        offset,
+        include: [
+          {
+            model: Review,
+            as: 'reviews',
+          },
+          {
+            model: ProductFeatures,
+            as: 'product_features',
+          },
+        ],
       });
     }
     return products;
@@ -110,9 +160,38 @@ export class ProductService {
     return review;
   }
 
+  async findBySearch(query) {
+    const products = await this.productRepository.findAll({
+      where: {
+        name: sequelize.where(
+          sequelize.fn('LOWER', sequelize.col('name')),
+          'LIKE',
+          `%${query.toLowerCase()}%`,
+        ),
+      },
+      include: [
+        {
+          model: ProductFeatures,
+          as: 'product_features',
+        },
+        {
+          model: Review,
+          as: 'reviews',
+        },
+      ],
+    });
+    return products;
+  }
+
   async getLatestProducts() {
     const latest = await this.productRepository.findAll({
-      limit: 5,
+      include: [
+        {
+          model: Review,
+          as: 'reviews',
+        },
+      ],
+      limit: 8,
       order: [['createdAt', 'DESC']],
     });
     return latest;

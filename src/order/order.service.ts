@@ -4,7 +4,8 @@ import { Op } from 'sequelize';
 import { CategoryOrderCount } from 'src/categories/category.model';
 import { Product, ProductOrderCount } from 'src/product/product.model';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Order, OrderItem } from './order.model';
+import { Order, OrderItem, OrderStatus } from './order.model';
+import { CreateOrderStatusDto } from './dto/create-order-status.dto';
 
 @Injectable()
 export class OrderService {
@@ -16,6 +17,7 @@ export class OrderService {
     private categoryOrderCountRepository: typeof CategoryOrderCount,
     @InjectModel(ProductOrderCount)
     private productOrderCountRepository: typeof ProductOrderCount,
+    @InjectModel(OrderStatus) private orderStatusRepository: typeof OrderStatus,
   ) {}
 
   async order(dto: CreateOrderDto, req: any) {
@@ -39,7 +41,12 @@ export class OrderService {
       return null;
     }
 
-    const order = await this.orderRepository.create(dto);
+    const status = await this.getOrderStatusByValue('Принят');
+
+    const order = await this.orderRepository.create({
+      ...dto,
+      statusId: status.id,
+    });
 
     items.forEach(async (i) => {
       const product = await this.productRepository.findByPk(i.product.id);
@@ -65,6 +72,45 @@ export class OrderService {
     return order;
   }
 
+  async getOrderById(id: number) {
+    const order = await this.orderRepository.findOne({
+      where: { id },
+      include: [
+        {
+          model: OrderItem,
+          as: 'order_items',
+          include: [
+            {
+              model: Product,
+              as: 'product',
+            },
+          ],
+        },
+        {
+          model: OrderStatus,
+        },
+      ],
+    });
+    return order;
+  }
+
+  async createOrderStatus(dto: CreateOrderStatusDto) {
+    const status = await this.orderStatusRepository.create(dto);
+    return status;
+  }
+
+  async getOrderStatus() {
+    const status = await this.orderStatusRepository.findAll();
+    return status;
+  }
+
+  async getOrderStatusByValue(value: string) {
+    const status = await this.orderStatusRepository.findOne({
+      where: { value },
+    });
+    return status;
+  }
+
   async findUserOrders(id: number) {
     const orders = await this.orderRepository.findAll({
       where: { userId: id },
@@ -72,6 +118,25 @@ export class OrderService {
         {
           model: OrderItem,
           include: [Product],
+        },
+        {
+          model: OrderStatus,
+        },
+      ],
+    });
+    return orders;
+  }
+
+  async getManagerOrders() {
+    const orders = await this.orderRepository.findAll({
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: OrderItem,
+          include: [Product],
+        },
+        {
+          model: OrderStatus,
         },
       ],
     });
@@ -95,11 +160,7 @@ export class OrderService {
 
   async monthlyEncome() {
     const date = new Date();
-    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-    const previousMonth = new Date(
-      new Date().setMonth(lastMonth.getMonth() - 1),
-    );
+    const firstDay = new Date(date.getFullYear(), date.getMonth() - 1, 1);
     const orders = await this.orderRepository.findAll({
       where: { createdAt: { [Op.between]: [firstDay, new Date()] } },
     });
